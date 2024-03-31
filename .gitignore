@@ -5,6 +5,7 @@
 ml-stuttering-events-dataset/[CLIP_DIR]/
 ml-stuttering-events-dataset/[WAV_DIR]/
 ml-stuttering-events-dataset/test_audio/
+ml-stuttering-events-dataset/AudioFiles/
 
 # Python typical ignores
 # Byte-compiled / optimized / DLL files
