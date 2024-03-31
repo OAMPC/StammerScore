@@ -2,10 +2,10 @@
 .vscode/
 
 # Ignore directories in ml-stuttering-events-dataset
-ml-stuttering-events-dataset/[CLIP_DIR]/
-ml-stuttering-events-dataset/[WAV_DIR]/
-ml-stuttering-events-dataset/test_audio/
-ml-stuttering-events-dataset/AudioFiles/
+# Ignore specific directories in ml-stuttering-events-dataset
+AudioFiles/*
+AudioFiles/
+
 
 # Python typical ignores
 # Byte-compiled / optimized / DLL files
