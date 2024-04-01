@@ -5,7 +5,7 @@
 # Ignore specific directories in ml-stuttering-events-dataset
 AudioFiles/*
 AudioFiles/
-
+ML Models/
 
 # Python typical ignores
 # Byte-compiled / optimized / DLL files
