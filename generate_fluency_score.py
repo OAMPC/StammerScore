@@ -8,18 +8,14 @@ import librosa
 import soundfile as sf
 from tqdm import tqdm
 import subprocess
+import feature_extractor as fe
+
 
 def split_audio_signal(y, sr, chunk_length=3):
     """Splits an audio signal into fixed-length chunks."""
     chunks = [(y[i:i + chunk_length * sr], i // (chunk_length * sr))
-              for i in tqdm(range(0, len(y), chunk_length * sr), 
-                            desc="Splitting audio", 
-                            total=len(y) // (chunk_length * sr))]
+              for i in range(0, len(y), chunk_length * sr) if i + chunk_length * sr <= len(y)]
     return chunks
-
-def extract_features(audio_signal, sr):
-    """Extracts MFCC features from an audio signal."""
-    return np.mean(librosa.feature.mfcc(y=audio_signal, sr=sr, n_mfcc=13), axis=1)
 
 def save_chunks_and_predict(chunks, chunks_dir, sr, model, scaler):
     """Saves audio chunks to disk in 'fluent chunks' or 'dysfluent chunks' directories based on predictions."""
@@ -32,7 +28,7 @@ def save_chunks_and_predict(chunks, chunks_dir, sr, model, scaler):
 
     predictions, chunk_names = [], []
     for chunk, index in tqdm(chunks, desc="Processing chunks"):
-        features = extract_features(chunk, sr)
+        features = fe.extract_features_advanced(chunk, sr)
         scaled_features = scaler.transform(np.array(features).reshape(1, -1))
         prediction = model.predict(scaled_features)[0]
         
@@ -123,14 +119,14 @@ def setup_arguments():
 
 def testArgs():    
     args = argparse.Namespace()
-    args.model_path = "C:\\Users\\ojmar\\Documents\\Uni\\Synoptic Project\\StammerScore\\ML Models\\Strict-Binary-RandF\\model.joblib"
-    args.scaler_path = "C:\\Users\\ojmar\\Documents\\Uni\\Synoptic Project\\StammerScore\\ML Models\\Strict-Binary-RandF\\scaler.joblib"
+    args.model_path = "C:\\Users\\ojmar\\Documents\\Uni\\Synoptic Project\\StammerScore\\ML Models\\Strict-Binary-RandF-gpu-optimised\\model.joblib"
+    args.scaler_path = "C:\\Users\\ojmar\\Documents\\Uni\\Synoptic Project\\StammerScore\\ML Models\Strict-Binary-RandF-gpu-optimised\\scaler.joblib"
     # args.audio_clip_path = "C:\\Users\\ojmar\\Documents\\Uni\\Synoptic Project\\StammerScore\\AudioFiles\\test_audio\\Creating-a-Safe-Space-at-Work-For People-Who-Stutter.wav"
     # args.audio_clip_path = "C:\\Users\\ojmar\\Documents\\Uni\\Synoptic Project\\StammerScore\\AudioFiles\\test_audio\\do-schools-kill-creativity-sir-ken-robinson-ted.wav"
-    args.audio_clip_path = "C:\\Users\\ojmar\\Documents\\Uni\\Synoptic Project\\StammerScore\\AudioFiles\\test_audio\\6-steps-to-overcoming-self-doubt-and-conquering-your-fears-lewis-howes-short.wav"
+    # args.audio_clip_path = "C:\\Users\\ojmar\\Documents\\Uni\\Synoptic Project\\StammerScore\\AudioFiles\\test_audio\\6-steps-to-overcoming-self-doubt-and-conquering-your-fears-lewis-howes-short.wav"
     # args.audio_clip_path = "C:\\Users\\ojmar\\Documents\\Uni\\Synoptic Project\\StammerScore\\AudioFiles\\test_audio\\My Stuttering Life Podcast Presents - My Journey From PWS To PWSS.wav"
-    # args.audio_clip_path = "C:\\Users\\ojmar\\Documents\\Uni\\Synoptic Project\\StammerScore\\AudioFiles\\test_audio\\How Placebo Effects Work to Change Our Biology & Psychology - short.wav"
-    args.output_dir = "C:\\Users\\ojmar\\Documents\\Uni\\Synoptic Project\\StammerScore\\ML Models\\Strict-Binary-RandF"
+    args.audio_clip_path = "C:\\Users\\ojmar\\Documents\\Uni\\Synoptic Project\\StammerScore\\AudioFiles\\test_audio\\How Placebo Effects Work to Change Our Biology & Psychology - short.wav"
+    args.output_dir = "C:\\Users\\ojmar\\Documents\\Uni\\Synoptic Project\\StammerScore\\ML Models\\Strict-Binary-RandF-gpu-optimised"
     return args
 
 if __name__ == "__main__":
@@ -140,5 +136,6 @@ if __name__ == "__main__":
         convert_audio_to_mono_wav_safe(args.audio_clip_path)
     else:
         print("Audio file is already in the target format. No conversion needed.")
+
     fluency_score = predict_and_score(args.audio_clip_path, args.model_path, args.scaler_path, args.output_dir)
     print(f"Fluency Score: {fluency_score}")
