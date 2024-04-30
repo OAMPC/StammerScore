@@ -16,18 +16,42 @@ class DysfluencyMarkerApp:
         self.audio_loaded = False
         self.is_playing = False
         self.pause_time = 0  # Add an attribute to track pause time
+        self.introductory_screen()
 
-        # Layout
-        self.play_button = tk.Button(master, text="Play Audio", command=self.toggle_playback)
+
+    def introductory_screen(self):
+        self.intro_frame = tk.Frame(self.master)
+        self.intro_frame.pack(padx=10, pady=10)
+
+        # Display the explanation
+        info_text = ("Welcome to the Dysfluency Marker Task.\n\n"
+                     "Click the 'Mark Dysfluency' button every time you hear a dysfluent event. "
+                     "This could be any form of repetition, prolongation, block or interjection. "
+                     "You do not need to identify the type of dysfluency, but it's good to know what is considered dysfluent. "
+                     "Feel free to mark as often as necessary, even within short intervals. If a stutter lasts more than a few seconds, please press again.\n\n"
+                     "Press 'Next' when you are ready to begin.")
+        info_label = tk.Label(self.intro_frame, text=info_text, wraplength=400, justify="left")
+        info_label.pack(pady=20)
+
+        next_button = tk.Button(self.intro_frame, text="Next", command=self.load_audio_interface)
+        next_button.pack()
+
+
+    def load_audio_interface(self):
+        # Destroy the introductory frame and proceed to the audio interface
+        self.intro_frame.destroy()
+
+        # Layout for audio interface
+        self.play_button = tk.Button(self.master, text="Play Audio", command=self.toggle_playback)
         self.play_button.pack()
 
-        self.mark_button = tk.Button(master, text="Mark Dysfluency", command=self.mark_dysfluency, state=tk.DISABLED)
+        self.mark_button = tk.Button(self.master, text="Mark Dysfluency", command=self.mark_dysfluency, state=tk.DISABLED)
         self.mark_button.pack()
 
-        self.progress = ttk.Progressbar(master, orient="horizontal", length=200, mode="determinate")
+        self.progress = ttk.Progressbar(self.master, orient="horizontal", length=200, mode="determinate")
         self.progress.pack()
 
-        self.status_label = tk.Label(master, text="Load an audio file to get started.", wraplength=300)
+        self.status_label = tk.Label(self.master, text="Load an audio file to get started.", wraplength=300)
         self.status_label.pack()
 
         # Load audio file
