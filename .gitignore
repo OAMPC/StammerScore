@@ -6,6 +6,12 @@
 AudioFiles/*
 AudioFiles/
 ML Models/
+AudioFilesAugmented/*
+AudioFilesAugmented/
+TestClipUpload/*
+TestClipUpload/
+Evaluation/Audio Tests/*
+Evaluation/Audio Tests/
 
 # Python typical ignores
 # Byte-compiled / optimized / DLL files

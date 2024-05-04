@@ -19,7 +19,6 @@ def train_and_evaluate_randf_simple(X_train, X_test, y_train, y_test, model_path
     # Save the trained model
     dump(model, model_path)
 
-
 def train_and_evaluate_randf_optimised(X_train, X_test, y_train, y_test, model_path):
     param_grid = {
         'n_estimators': [50, 100, 200],

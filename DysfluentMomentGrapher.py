@@ -38,6 +38,7 @@ def plot_ML_fluency_chart(csv_path):
     plt.show()
 
 # Example usage
-# csv_path = 'ML Models/Strict-Binary-RandF_optimised/How Placebo Effects Work to Change Our Biology & Psychology - short/chunk_predictions.csv'
-csv_path = 'Evaluation/Marks/Processed/t.csv'
+# csv_path = 'ML Models/Strict-Binary-RandF_optimised/How Placebo Effects Work to Change Our Biology & Psychology - short/chunk_predictions.csv
+# csv_path = 'Evaluation\Marks\Processed\MSLP - Ollie.csv'
+csv_path = 'ML Models\Strict-Binary-RandF-basic\My Stuttering Life Podcast Presents - My Journey From PWS To PWSS\chunk_predictions.csv'
 plot_ML_fluency_chart(csv_path)
