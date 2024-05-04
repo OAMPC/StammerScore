@@ -1,6 +1,0 @@
-& C:/Users/ojmar/AppData/Local/Programs/Python/Python310/python.exe `
-"c:/Users/ojmar/Documents/Uni/Synoptic Project/StammerScore/generate_fluency_score.py" `
-"C:\Users\ojmar\Documents\Uni\Synoptic Project\StammerScore\ML Models\Strict-Binary-RandF\model.joblib" `
-"C:\Users\ojmar\Documents\Uni\Synoptic Project\StammerScore\ML Models\Strict-Binary-RandF\scaler.joblib" `
-"C:\Users\ojmar\Documents\Uni\Synoptic Project\StammerScore\AudioFiles\test_audio\Creating-a-Safe-Space-at-Work-For-People-Who-Stutter.wav" `
-"C:\Users\ojmar\Documents\Uni\Synoptic Project\StammerScore\ML Models\Strict-Binary-RandF"
