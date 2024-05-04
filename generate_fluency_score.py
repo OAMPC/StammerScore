@@ -124,22 +124,23 @@ def setup_arguments():
 
 def testArgs():    
     args = argparse.Namespace()
-    args.model_path = "ML Models\\Strict-Binary-RandF-gpu-optimised\\model.joblib"
-    args.scaler_path = "ML Models\Strict-Binary-RandF-gpu-optimised\\scaler.joblib"
+    args.model_path = "ML Models\\Kind-Binary-RandF-gpu-optimised\\model.joblib"
+    args.scaler_path = "ML Models\\Kind-Binary-RandF-gpu-optimised\\scaler.joblib"
     # args.audio_clip_path = "AudioFiles\\test_audio\\Creating-a-Safe-Space-at-Work-For People-Who-Stutter.wav"
     # args.audio_clip_path = "AudioFiles\\test_audio\\do-schools-kill-creativity-sir-ken-robinson-ted.wav"
     # args.audio_clip_path = "AudioFiles\\test_audio\\6-steps-to-overcoming-self-doubt-and-conquering-your-fears-lewis-howes-short.wav"
-    # args.audio_clip_path = "AudioFiles\\test_audio\\My Stuttering Life Podcast Presents - My Journey From PWS To PWSS.wav"
-    args.audio_clip_path = "AudioFiles\\test_audio\\How Placebo Effects Work to Change Our Biology & Psychology - short.wav"
-    args.output_dir = "ML Models\\Strict-Binary-RandF-gpu-optimised"
+    # args.audio_clip_path = "AudioFiles\\test_audio\\My Stuttering Life Podcast Presents - My Journey From PWS To PWSS.wav"AudioFiles\Test Audio\Short Test.wav
+    # args.audio_clip_path = "AudioFiles\\test_audio\\How Placebo Effects Work to Change Our Biology & Psychology - short.wav"
+    args.audio_clip_path = "Evaluation\\Audio Tests\\My Stuttering Life Podcast Presents - My Journey From PWS To PWSS.wav"
+    args.output_dir = "ML Models\\Kind-Binary-RandF-gpu-optimised"
     return args
 
 def setupArgs(audio_clip_path):    
     args = argparse.Namespace()
-    args.model_path = "ML Models\Strict-Binary-RandF_optimised\model.joblib"
-    args.scaler_path = "ML Models\Strict-Binary-RandF_optimised\scaler.joblib"
+    args.model_path = "ML Models\\Strict-Binary-RandF_optimised\\model.joblib"
+    args.scaler_path = "ML Models\\Strict-Binary-RandF_optimised\\scaler.joblib"
     args.audio_clip_path = audio_clip_path
-    args.output_dir = "ML Models\Strict-Binary-RandF_optimised"
+    args.output_dir = "ML Models\\Strict-Binary-RandF_optimised"
     return args
 
 if __name__ == "__main__":
