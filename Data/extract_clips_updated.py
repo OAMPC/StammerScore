@@ -31,10 +31,8 @@ label_file = args.labels
 data_dir = args.wavs
 output_dir = args.clips
 
-# Load label/clip file
 data = pd.read_csv(label_file, dtype={"EpId": str})
 
-# Get label columns from data file
 shows = data['Show']
 episodes = data['EpId']
 clip_idxs = data['ClipId']
@@ -54,7 +52,6 @@ for i in cur_iter:
     show_abrev = shows[i]
     episode = episodes[i].strip()
 
-    # Setup paths
     wav_path = pathlib.Path(data_dir, shows[i], f"{episode}.wav")
     clip_dir = pathlib.Path(output_dir, show_abrev, episode)
     clip_path = clip_dir / f"{shows[i]}_{episode}_{clip_idx}.wav"
@@ -63,10 +60,9 @@ for i in cur_iter:
         print("Missing", wav_path)
         continue
 
-    # Verify clip directory exists
     os.makedirs(clip_dir, exist_ok=True)
 
-    # Load audio. For efficiency reasons, don't reload if we've already opened the file.
+    # For efficiency reasons, don't reload if file is already opened.
     if str(wav_path) != loaded_wav:
         sample_rate, audio = wavfile.read(wav_path)
         assert sample_rate == 16000, "Sample rate must be 16 kHz"
@@ -74,6 +70,5 @@ for i in cur_iter:
         # Keep track of the open file
         loaded_wav = str(wav_path)
 
-    # Save clip to file
     clip = audio[starts[i]:stops[i]]
     wavfile.write(clip_path, sample_rate, clip)

@@ -15,7 +15,7 @@ class DysfluencyMarkerApp:
         pygame.mixer.init()
         self.audio_loaded = False
         self.is_playing = False
-        self.pause_time = 0  # Add an attribute to track pause time
+        self.pause_time = 0
         self.introductory_screen()
 
 
@@ -23,7 +23,6 @@ class DysfluencyMarkerApp:
         self.intro_frame = tk.Frame(self.master)
         self.intro_frame.pack(padx=10, pady=10)
 
-        # Display the explanation
         info_text = ("Welcome to the Dysfluency Marker Task.\n\n"
                      "Click the 'Mark Dysfluency' button every time you hear a dysfluent event. "
                      "This could be any form of repetition, prolongation, block or interjection. "
@@ -41,7 +40,6 @@ class DysfluencyMarkerApp:
         # Destroy the introductory frame and proceed to the audio interface
         self.intro_frame.destroy()
 
-        # Layout for audio interface
         self.play_button = tk.Button(self.master, text="Play Audio", command=self.toggle_playback)
         self.play_button.pack()
 
@@ -54,7 +52,6 @@ class DysfluencyMarkerApp:
         self.status_label = tk.Label(self.master, text="Load an audio file to get started.", wraplength=300)
         self.status_label.pack()
 
-        # Load audio file
         self.load_audio_file()
 
     def reset_ui(self):
@@ -84,16 +81,13 @@ class DysfluencyMarkerApp:
                     rate = wav_file.getframerate()
                     duration = frames / float(rate)
             else:
-                # Placeholder for unsupported formats
                 self.status_label.config(text="Unsupported file format.")
                 duration = 0
             
-            # Set the progress bar's maximum value to the duration of the audio file
             self.progress["maximum"] = duration
 
-            # Ask for the test name
             test_name = askstring("Test Name", "Enter the name of the test:")
-            if test_name:  # Ensure a name was entered
+            if test_name:
                 print("Create CSV")
                 self.csv_file = f"Evaluation\Marks\Raw\{test_name}.csv"
                 self.output_csv_file = f"Evaluation\Marks\Processed\{test_name}.csv"
@@ -114,7 +108,6 @@ class DysfluencyMarkerApp:
             self.play_button.config(state=tk.DISABLED)
             self.update_progress_bar()
         elif not self.audio_loaded:
-            # If no audio is loaded, open the file dialog to select a new file
             self.load_audio_file()
 
     def update_progress_bar(self):
@@ -144,16 +137,11 @@ class DysfluencyMarkerApp:
             self.status_label.config(text=f"Dysfluency marked at {current_time:.2f} seconds.")
     
     def convert_csv_format(self, input_csv_path, output_csv_path):
-        # Read the CSV into a DataFrame
         df = pd.read_csv(input_csv_path)
-        
-        # Extract the total duration from the first row's Timestamp
+
         total_duration = float(df['Timestamp'].iloc[0].split('/')[1])
-        
-        # Calculate the number of chunks
         num_chunks = int(total_duration // 3) + (1 if total_duration % 3 > 0 else 0)
         
-        # Initialize the prediction dictionary with all chunks as fluent (1)
         predictions = {f"chunk_{i}.wav": 1 for i in range(num_chunks)}
         
         # Mark chunks containing a dysfluent moment as 0
@@ -162,10 +150,7 @@ class DysfluencyMarkerApp:
             chunk_index = int(dysfluent_time // 3)
             predictions[f"chunk_{chunk_index}.wav"] = 0
         
-        # Convert the dictionary to a DataFrame
         predictions_df = pd.DataFrame(list(predictions.items()), columns=['ChunkName', 'Prediction'])
-        
-        # Write the new CSV file
         predictions_df.to_csv(output_csv_path, index=False)
 
 if __name__ == "__main__":

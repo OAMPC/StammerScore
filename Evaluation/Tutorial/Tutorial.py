@@ -18,9 +18,8 @@ class StutteringTestApp:
     def __init__(self, master):
         self.master = master
         master.title("Stuttering Event Classification Test")
-        mixer.init()  # Initialize mixer for playing audio clips
+        mixer.init()
 
-        # Start with the tutorial screen
         self.start_tutorial()
 
     def start_tutorial(self):
@@ -45,11 +44,9 @@ class StutteringTestApp:
             self.label = tk.Label(self.tutorial_frame, text=f"{category}: {description}")
             self.label.pack(pady=(10, 20))
 
-            # Button to play audio example
             play_button = tk.Button(self.tutorial_frame, text="Play Example", command=lambda: self.play_example(category))
             play_button.pack(pady=5)
 
-            # Button to move to next category
             next_button = tk.Button(self.tutorial_frame, text="Next", command=self.show_categories)
             next_button.pack(pady=10)
 
@@ -76,7 +73,6 @@ class StutteringTestApp:
         label = tk.Label(self.test_frame, text="Now, listen to the audio and select the correct stuttering event type:")
         label.pack(pady=(0, 20))
 
-        # Place the play button before the dropdown menu
         play_button = tk.Button(self.test_frame, text="Play Random Clip", command=self.play_random_clip)
         play_button.pack(side=tk.TOP, padx=5, pady=5)
 
@@ -87,11 +83,9 @@ class StutteringTestApp:
         menu = tk.OptionMenu(self.test_frame, self.variable, *stuttering_categories.keys())
         menu.pack(pady=(0, 20))
 
-        # Initially disabled submit button
         self.submit_button = tk.Button(self.test_frame, text="Submit Answer", command=self.check_answer, state=tk.DISABLED)
         self.submit_button.pack(side=tk.TOP, padx=5, pady=5)
 
-        # Counter for correct answers
         self.correct_count = 0
         self.correct_label = tk.Label(self.test_frame, text="Correct Answers: 0/10")
         self.correct_label.pack()
@@ -114,7 +108,7 @@ class StutteringTestApp:
         else:
             messagebox.showinfo("Result", f"Incorrect! Correct answer was {self.current_category}")
         self.variable.set("Choose type")
-        self.submit_button.config(state=tk.DISABLED)  # Disable the button again after an answer is submitted
+        self.submit_button.config(state=tk.DISABLED)
         self.current_category = None
         self.current_clip_path = None
 

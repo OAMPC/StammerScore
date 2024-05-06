@@ -10,7 +10,6 @@ from tqdm import tqdm
 import subprocess
 import feature_extractor as fe
 
-
 def split_audio_signal(y, sr, chunk_length=3):
     """Splits an audio signal into fixed-length chunks."""
     chunks = [(y[i:i + chunk_length * sr], i // (chunk_length * sr))
@@ -46,7 +45,6 @@ def save_chunks_and_predict(chunks, chunks_dir, sr, model, scaler, update_progre
         predictions.append(prediction)
         chunk_names.append(chunk_name)
 
-        # Update progress if callback is provided
         if update_progress_callback is not None:
             update_progress_callback(i + 1, total_chunks)
 
@@ -82,16 +80,12 @@ def predict_and_score(audio_path, model_path, scaler_path, output_dir, update_pr
     return fluency_score
 
 def convert_audio_to_mono_wav_safe(audio_path_orig):
-    """Safely converts an audio file to 16kHz mono WAV format, replacing the original file."""
-    # Create a temporary path for the converted file
-    
+    """Converts an audio file to 16kHz mono WAV format, replacing the original file."""
+
     print("Converting the audio file to the correct format")
     temp_wav_path = audio_path_orig + ".temp.wav"
-    
-    # Construct the ffmpeg command line for conversion
     ffmpeg_cmd = f"ffmpeg -y -i \"{audio_path_orig}\" -ac 1 -ar 16000 \"{temp_wav_path}\" -loglevel error"
     
-    # Execute the command using subprocess
     try:
         subprocess.check_call(ffmpeg_cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
         # If conversion was successful, replace the original file with the converted one
@@ -102,12 +96,7 @@ def convert_audio_to_mono_wav_safe(audio_path_orig):
         os.remove(temp_wav_path)
 
 def is_audio_in_target_format(audio_path, target_sr=16000, target_channels=1):
-    """
-    Checks if the audio file is already in the target sample rate and channel configuration.
-    
-    Returns:
-    - True if the audio file meets the target specifications, False otherwise.
-    """
+    """Checks if the audio file is already in the target sample rate and channel configuration."""
     y, sr = librosa.load(audio_path, sr=None, mono=False)
     current_channels = 1 if len(y.shape) == 1 else y.shape[0]
     
@@ -122,19 +111,6 @@ def setup_arguments():
     parser.add_argument("output_dir", help="Directory to save output.")
     return parser.parse_args()
 
-def testArgs():    
-    args = argparse.Namespace()
-    args.model_path = "ML Models\\Kind-Binary-RandF-gpu-optimised\\model.joblib"
-    args.scaler_path = "ML Models\\Kind-Binary-RandF-gpu-optimised\\scaler.joblib"
-    # args.audio_clip_path = "AudioFiles\\test_audio\\Creating-a-Safe-Space-at-Work-For People-Who-Stutter.wav"
-    # args.audio_clip_path = "AudioFiles\\test_audio\\do-schools-kill-creativity-sir-ken-robinson-ted.wav"
-    # args.audio_clip_path = "AudioFiles\\test_audio\\6-steps-to-overcoming-self-doubt-and-conquering-your-fears-lewis-howes-short.wav"
-    # args.audio_clip_path = "AudioFiles\\test_audio\\My Stuttering Life Podcast Presents - My Journey From PWS To PWSS.wav"AudioFiles\Test Audio\Short Test.wav
-    # args.audio_clip_path = "AudioFiles\\test_audio\\How Placebo Effects Work to Change Our Biology & Psychology - short.wav"
-    args.audio_clip_path = "Evaluation\\Audio Tests\\My Stuttering Life Podcast Presents - My Journey From PWS To PWSS.wav"
-    args.output_dir = "ML Models\\Kind-Binary-RandF-gpu-optimised"
-    return args
-
 def setupArgs(audio_clip_path):    
     args = argparse.Namespace()
     args.model_path = "ML Models\\Strict-Binary-RandF_optimised\\model.joblib"
@@ -144,8 +120,7 @@ def setupArgs(audio_clip_path):
     return args
 
 if __name__ == "__main__":
-    # args = setup_arguments()
-    args = testArgs()
+    args = setup_arguments()
     if not is_audio_in_target_format(args.audio_clip_path):
         convert_audio_to_mono_wav_safe(args.audio_clip_path)
     else:

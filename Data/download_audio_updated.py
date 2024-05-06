@@ -36,24 +36,19 @@ n_items = len(urls)
 
 audio_types = [".mp3", ".m4a", ".mp4"]
 
-
 for i in range(n_items):
-	# Get show/episode IDs
 	show_abrev = table[i,-2]
 	ep_idx = table[i,-1]
 	episode_url = table[i,2]
 
-	# Check file extension
 	ext = ''
 	for ext in audio_types:
 		if ext in episode_url:
 			break
 
-	# Ensure the base folder exists for this episode
 	episode_dir = pathlib.Path(f"{wav_dir}/{show_abrev}/")
 	os.makedirs(episode_dir, exist_ok=True)
 
-	# Get file paths
 	audio_path_orig = pathlib.Path(f"{episode_dir}/{ep_idx}{ext}")
 	wav_path = pathlib.Path(f"{episode_dir}/{ep_idx}.wav")
 
@@ -62,7 +57,6 @@ for i in range(n_items):
 		continue
 
 	print("Processing", show_abrev, ep_idx)
-	# Download raw audio file. This could be parallelized.
 	if not os.path.exists(audio_path_orig):
 		line = f"wget -O {audio_path_orig} {episode_url}"
 		process = subprocess.Popen([(line)],shell=True)
