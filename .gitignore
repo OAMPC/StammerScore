@@ -12,6 +12,8 @@ TestClipUpload/*
 TestClipUpload/
 Evaluation/Audio Tests/*
 Evaluation/Audio Tests/
+Evaluation/Marks/*
+Evaluation/Marks/
 
 # Python typical ignores
 # Byte-compiled / optimized / DLL files
