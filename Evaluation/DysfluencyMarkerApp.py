@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog, ttk
+from tkinter import filedialog, ttk, font
 import pygame
 import csv
 import time
@@ -25,11 +25,11 @@ class DysfluencyMarkerApp:
 
         info_text = ("Welcome to the Dysfluency Marker Task.\n\n"
                      "Click the 'Mark Dysfluency' button every time you hear a dysfluent event. "
-                     "This could be any form of repetition, prolongation, block or interjection. "
-                     "You do not need to identify the type of dysfluency, but it's good to know what is considered dysfluent. "
+                     "This could be any form of repetition, prolongation, block or interjection. \n"
+                     "You do not need to identify the type of dysfluency, but it's good to know what is considered dysfluent. \n"
                      "Feel free to mark as often as necessary, even within short intervals. If a stutter lasts more than a few seconds, please press again.\n\n"
                      "Press 'Next' when you are ready to begin.")
-        info_label = tk.Label(self.intro_frame, text=info_text, wraplength=400, justify="left")
+        info_label = tk.Label(self.intro_frame, text=info_text, wraplength=1000, justify="left")
         info_label.pack(pady=20)
 
         next_button = tk.Button(self.intro_frame, text="Next", command=self.load_audio_interface)
@@ -41,16 +41,18 @@ class DysfluencyMarkerApp:
         self.intro_frame.destroy()
 
         self.play_button = tk.Button(self.master, text="Play Audio", command=self.toggle_playback)
-        self.play_button.pack()
+        self.play_button.pack(pady=20)
 
         self.mark_button = tk.Button(self.master, text="Mark Dysfluency", command=self.mark_dysfluency, state=tk.DISABLED)
-        self.mark_button.pack()
+        self.mark_button.pack(pady=20)
+        
+        style.configure("Thick.Horizontal.TProgressbar", thickness=30)  # Increase thickness here
 
-        self.progress = ttk.Progressbar(self.master, orient="horizontal", length=200, mode="determinate")
-        self.progress.pack()
+        self.progress = ttk.Progressbar(self.master, orient="horizontal", length=400, mode="determinate", style="Thick.Horizontal.TProgressbar")
+        self.progress.pack(pady=20)
 
         self.status_label = tk.Label(self.master, text="Load an audio file to get started.", wraplength=300)
-        self.status_label.pack()
+        self.status_label.pack(pady=20)
 
         self.load_audio_file()
 
@@ -155,5 +157,19 @@ class DysfluencyMarkerApp:
 
 if __name__ == "__main__":
     root = tk.Tk()
+
+    default_font = font.nametofont("TkDefaultFont")
+    default_font.configure(size=18)  # You can adjust the size as needed
+    root.option_add("*Font", default_font)
+    
+    # Optionally, increase the default padding
+    root.option_add("*Button.padX", 20)  # Horizontal padding for buttons
+    root.option_add("*Button.padY", 20)  # Vertical padding for buttons
+    root.option_add("*Label.padX", 20)   # Horizontal padding for labels
+    root.option_add("*Label.padY", 20)   # Vertical padding for labels
+
+     # Create a style object
+    style = ttk.Style(root)
+
     app = DysfluencyMarkerApp(root)
     root.mainloop()

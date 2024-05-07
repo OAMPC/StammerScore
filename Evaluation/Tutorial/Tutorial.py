@@ -1,7 +1,7 @@
 import os
 import random
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, font
 from pygame import mixer
 
 # Path and category settings
@@ -20,6 +20,7 @@ class StutteringTestApp:
         master.title("Stuttering Event Classification Test")
         mixer.init()
 
+        self.used_clips = set()  # Track used clips
         self.start_tutorial()
 
     def start_tutorial(self):
@@ -56,10 +57,23 @@ class StutteringTestApp:
 
     def play_example(self, category):
         folder_path = os.path.join(BASE_PATH, category)
+        if not hasattr(self, 'file_indices'):
+            self.file_indices = {cat: 0 for cat in stuttering_categories.keys()}  # Initialize indices for each category
+        
         files = os.listdir(folder_path)
-        chosen_file = random.choice(files)
+        file_count = len(files)
+        if file_count == 0:
+            messagebox.showinfo("Error", "No audio files found in the directory.")
+            return
+        
+        # Get the current index and update it
+        current_index = self.file_indices[category]
+        chosen_file = files[current_index]
         mixer.music.load(os.path.join(folder_path, chosen_file))
         mixer.music.play()
+        
+        # Update the index to the next file, wrap around if at the end of the list
+        self.file_indices[category] = (current_index + 1) % file_count
 
     def start_test(self):
         # Clear the tutorial frame and setup the testing environment
@@ -105,6 +119,7 @@ class StutteringTestApp:
             self.correct_count += 1
             self.correct_label.config(text=f"Correct Answers: {self.correct_count}/10")
             messagebox.showinfo("Result", "Correct!")
+            self.used_clips.add(self.current_clip_path)  # Add the correctly guessed clip to used_clips
         else:
             messagebox.showinfo("Result", f"Incorrect! Correct answer was {self.current_category}")
         self.variable.set("Choose type")
@@ -116,16 +131,17 @@ class StutteringTestApp:
             self.show_completion_screen()
 
     def play_random_clip(self):
-        if not self.current_clip_path:
-            category = random.choice(list(stuttering_categories.keys()))
-            folder_path = os.path.join(BASE_PATH, stuttering_categories[category][0])
-            files = os.listdir(folder_path)
+        category = random.choice(list(stuttering_categories.keys()))
+        folder_path = os.path.join(BASE_PATH, stuttering_categories[category][0])
+        files = [f for f in os.listdir(folder_path) if os.path.join(folder_path, f) not in self.used_clips]
+        if files:
             chosen_file = random.choice(files)
             self.current_category = category
             self.current_clip_path = os.path.join(folder_path, chosen_file)
-
-        mixer.music.load(self.current_clip_path)
-        mixer.music.play()
+            mixer.music.load(self.current_clip_path)
+            mixer.music.play()
+        else:
+            messagebox.showinfo("No Clips Left", "No more clips available for this category.")
 
     def show_completion_screen(self):
         # Clear the test frame and show the completion message
@@ -137,6 +153,17 @@ class StutteringTestApp:
 
 def main():
     root = tk.Tk()
+    # Set default font for all widgets
+    default_font = font.nametofont("TkDefaultFont")
+    default_font.configure(size=18)  # You can adjust the size as needed
+    root.option_add("*Font", default_font)
+    
+    # Optionally, increase the default padding
+    root.option_add("*Button.padX", 10)  # Horizontal padding for buttons
+    root.option_add("*Button.padY", 10)  # Vertical padding for buttons
+    root.option_add("*Label.padX", 10)   # Horizontal padding for labels
+    root.option_add("*Label.padY", 10)   # Vertical padding for labels
+
     app = StutteringTestApp(root)
     root.mainloop()
 
