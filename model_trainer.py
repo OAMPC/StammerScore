@@ -1,5 +1,5 @@
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, f1_score, make_scorer
+from sklearn.metrics import accuracy_score, f1_score, make_scorer, roc_auc_score
 from sklearn.model_selection import GridSearchCV, train_test_split, RandomizedSearchCV
 from joblib import dump
 from scipy.stats import randint, uniform
@@ -36,31 +36,35 @@ def train_and_evaluate_randf_optimised(X_train, X_test, y_train, y_test, model_p
 
 def train_and_evaluate_randf_gpu_optimized(X_train, X_test, y_train, y_test, model_path):
     param_grid = {
-        'num_leaves': randint(31, 150),
-        'max_depth': randint(3, 10),
-        'learning_rate': [0.01, 0.05, 0.1],
-        'subsample': [0.5, 0.7, 0.9],
-        'colsample_bytree': [0.5, 0.7, 0.9],
-        'device': ['gpu'],  # Indicate to use GPU
+        'num_leaves': randint(20, 200),
+        'max_depth': randint(3, 15),     
+        'learning_rate': [0.001, 0.01, 0.05, 0.1, 0.2],  
+        'subsample': [0.5, 0.7, 0.9, 1.0],               
+        'colsample_bytree': [0.3, 0.5, 0.7, 0.9],        
+        'reg_alpha': [0, 0.1, 1, 10],                    
+        'reg_lambda': [0, 0.1, 1, 10],                   
+        'device': ['gpu'],
         'gpu_platform_id': [0],
         'gpu_device_id': [0]
     }
 
     # Initialize LightGBM model
-    lgb_model = lgb.LGBMClassifier(boosting_type='gbdt', objective='binary', 
+    lgb_model = lgb.LGBMClassifier(boosting_type='gbdt', objective='binary',
                                    random_state=42, metric='binary_logloss')
 
     # Randomized search for hyperparameter tuning
-    randomized_search = RandomizedSearchCV(lgb_model, param_distributions=param_grid, 
-                                           n_iter=10, cv=3, scoring='accuracy', 
-                                           n_jobs=-1, verbose=1)
+    randomized_search = RandomizedSearchCV(lgb_model, param_distributions=param_grid,
+                                           n_iter=50, cv=5, scoring='roc_auc',  # More iterations and changed scoring
+                                           n_jobs=-1, verbose=2)
     randomized_search.fit(X_train, y_train)
 
     best_model = randomized_search.best_estimator_
 
     y_pred = best_model.predict(X_test)
 
+    roc_auc = roc_auc_score(y_test, y_pred)
     accuracy = accuracy_score(y_test, y_pred)
+    print(f'Optimized Model ROC-AUC: {roc_auc:.4f}')
     print(f'Optimized Model Accuracy with LightGBM: {accuracy:.4f}')
 
     dump(best_model, model_path)
