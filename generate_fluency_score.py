@@ -1,5 +1,6 @@
 import argparse
 import os
+import csv
 import shutil
 import numpy as np
 import pandas as pd
@@ -111,23 +112,45 @@ def setup_arguments():
     parser.add_argument("output_dir", help="Directory to save output.")
     return parser.parse_args()
 
-def setupArgs(audio_clip_path):    
+def setupArgs(audio_clip_path, model_name = "combined-and-filtered-strict-Binary-RandF-gpu-optimised"):    
     args = argparse.Namespace()
-    args.model_path = "ML Models\\Strict-Binary-RandF_optimised\\model.joblib"
-    args.scaler_path = "ML Models\\Strict-Binary-RandF_optimised\\scaler.joblib"
+    args.model_path = f"ML Models\\{model_name}\\model.joblib"
+    print(f"Using model: {model_name}")
+    args.scaler_path = f"ML Models\\{model_name}\\scaler.joblib"
     args.audio_clip_path = audio_clip_path
-    args.output_dir = "ML Models\\Strict-Binary-RandF_optimised"
+    args.output_dir = f"ML Models\\{model_name}"
     return args
 
 if __name__ == "__main__":
-    args = setup_arguments()
-    if not is_audio_in_target_format(args.audio_clip_path):
-        convert_audio_to_mono_wav_safe(args.audio_clip_path)
-    else:
-        print("Audio file is already in the target format. No conversion needed.")
+    
+    models = ['Kind-Binary-RandF-simple', 'Kind-Binary-RandF-gpu-optimised', 'Strict-Binary-RandF-gpu-optimised', 'combined-and-filtered-strict-Binary-RandF-gpu-optimised', 'combined-augmented-and-filtered-strict-Binary-RandF-gpu-optimised']
+    clips = ['Evaluation/Audio Tests/How Placebo Effects Work to Change Our Biology & Psychology - 10 min.wav', 'Evaluation/Audio Tests/My Stuttering Life Podcast Presents - My Journey From PWS To PWSS.wav', 'Evaluation/Audio Tests/rupert-s-story-stuttering-and-building-community-in-academia - 10 mins.wav']
 
-    fluency_score = predict_and_score(args.audio_clip_path, args.model_path, args.scaler_path, args.output_dir)
-    print(f"Fluency Score: {fluency_score}")
+    output_dir = "Evaluation"    
+    output_csv_path = os.path.join(output_dir, "model_audio_fluency_scores.csv")
+
+    with open(output_csv_path, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["Model Name", "Audio Clip", "Fluency Score"])
+
+        # Iterate over each model and audio clip
+        for model_name in models:
+            for clip_path in clips:
+                # Update paths to model and scaler according to the current model
+                model_path = f"ML Models/{model_name}/model.joblib"
+                scaler_path = f"ML Models/{model_name}/scaler.joblib"
+                audio_clip_path = clip_path
+
+                # Convert audio to mono WAV if needed and predict fluency score
+                if not is_audio_in_target_format(audio_clip_path):
+                    convert_audio_to_mono_wav_safe(audio_clip_path)
+
+                fluency_score = predict_and_score(audio_clip_path, model_path, scaler_path, output_dir)
+                writer.writerow([model_name, clip_path, fluency_score])
+
+    # Print the results table from the CSV
+    with open(output_csv_path, mode='r') as file:
+        print(file.read())
 
 def ui_integrator(audio_clip_path, update_progress_callback):
     args = setupArgs(audio_clip_path)
